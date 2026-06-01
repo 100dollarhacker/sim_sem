@@ -97,7 +97,8 @@ femm.openfemm();
 femm.newdocument(1)
 
 # Draw the geometry
-femm.ei_probdef('micrometers','planar',10**(-8),10**6,30);
+femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
+# femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 femm.ei_drawrectangle(2,0,22,2);
 femm.ei_drawrectangle(2+24,0,22+24,2);
 femm.ei_drawrectangle(-2,0,-22,2);
@@ -150,8 +151,8 @@ femm.ei_clearselected();
 # Add a "Conductor Property" for each of the strips
 femm.ei_addconductorprop('v0',0,0,1);
 femm.ei_addconductorprop('v1',0,0,1);
-femm.ei_addconductorprop('v2',0,0,1);
-femm.ei_addconductorprop('v3',0,0,1);
+# femm.ei_addconductorprop('v2',0,0,1);
+# femm.ei_addconductorprop('v3',0,0,1);
 
 # Assign the "v0" properties to all sides of the first strip
 femm.ei_selectsegment(-46,1);
@@ -169,21 +170,21 @@ femm.ei_selectsegment(-36+24,0);
 femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
 femm.ei_clearselected()
 
-# Assign the "v2" properties to all sides of the third strip
-femm.ei_selectsegment(-46+2*24,1);
-femm.ei_selectsegment(-26+2*24,1);
-femm.ei_selectsegment(-36+2*24,2);
-femm.ei_selectsegment(-36+2*24,0);
-femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v2');
-femm.ei_clearselected()
+# # Assign the "v2" properties to all sides of the third strip
+# femm.ei_selectsegment(-46+2*24,1);
+# femm.ei_selectsegment(-26+2*24,1);
+# femm.ei_selectsegment(-36+2*24,2);
+# femm.ei_selectsegment(-36+2*24,0);
+# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v2');
+# femm.ei_clearselected()
 
-# Assign the "v3" properties to all sides of the fourth strip
-femm.ei_selectsegment(-46+3*24,1);
-femm.ei_selectsegment(-26+3*24,1);
-femm.ei_selectsegment(-36+3*24,2);
-femm.ei_selectsegment(-36+3*24,0);
-femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v3');
-femm.ei_clearselected()
+# # Assign the "v3" properties to all sides of the fourth strip
+# femm.ei_selectsegment(-46+3*24,1);
+# femm.ei_selectsegment(-26+3*24,1);
+# femm.ei_selectsegment(-36+3*24,2);
+# femm.ei_selectsegment(-36+3*24,0);
+# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v3');
+# femm.ei_clearselected()
 
 femm.ei_zoomnatural();
 
@@ -194,8 +195,8 @@ femm.ei_saveas('./trash/strips.fee');
 c=[]
  
 # for k in range(0,4):
-femm.ei_modifyconductorprop('v0',1,1);
-# femm.ei_modifyconductorprop('v1',1,1 if (k==1) else 0);
+femm.ei_modifyconductorprop('v0',1,1000);
+femm.ei_modifyconductorprop('v1',1,-1000);
 # femm.ei_modifyconductorprop('v2',1,1 if (k==2) else 0);
 # femm.ei_modifyconductorprop('v3',1,1 if (k==3) else 0);
 femm.ei_analyze();
