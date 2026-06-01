@@ -97,8 +97,8 @@ femm.openfemm();
 femm.newdocument(1)
 
 # Draw the geometry
-# femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
-femm.ei_probdef('millimeters','	axi',10**(-8),10**6,30);
+femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
+# femm.ei_probdef('millimeters','	axi',10**(-8),10**6,30);
 femm.ei_drawrectangle(2,0,22,2);
 femm.ei_drawrectangle(2+24,0,22+24,2);
 femm.ei_drawline(-120,-20,120,-20);
