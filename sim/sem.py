@@ -97,12 +97,22 @@ femm.openfemm();
 femm.newdocument(1)
 
 # Draw the geometry
-femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
-# femm.ei_probdef('millimeters','	axi',10**(-8),10**6,30);
+# femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
+femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 femm.ei_drawrectangle(2,0,22,2);
 femm.ei_drawrectangle(2+24,0,22+24,2);
-femm.ei_drawline(-120,-20,120,-20);
-femm.ei_drawarc(120,-20,-120,-20,180,2.5);
+
+
+# femm.ei_drawline(-120,-20,120,-20);
+# femm.ei_drawarc(120,-20,-120,-20,180,2.5);
+
+femm.ei_drawline(1,0,120,0);
+femm.ei_drawline(1,200,120,200);
+
+femm.ei_drawline(1,0,1,200);
+femm.ei_drawline(120,0,120,200);
+
+# femm.ei_drawarc(120,-20,-120,-20,180,2.5);
 
 
 
@@ -116,8 +126,8 @@ femm.ei_clearselected();
 
 
 femm.ei_addmaterial('air',1,1,0);
-femm.ei_addblocklabel(0,50);
-femm.ei_selectlabel(0,50);
+femm.ei_addblocklabel(10,50);
+femm.ei_selectlabel(10,50);
 femm.ei_setblockprop('air',0,1,0);
 femm.ei_clearselected();
 
