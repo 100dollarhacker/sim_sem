@@ -97,36 +97,20 @@ femm.openfemm();
 femm.newdocument(1)
 
 # Draw the geometry
-femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
-# femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
+# femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
+femm.ei_probdef('millimeters','	axi',10**(-8),10**6,30);
 femm.ei_drawrectangle(2,0,22,2);
 femm.ei_drawrectangle(2+24,0,22+24,2);
-# femm.ei_drawrectangle(-2,0,-22,2);
-# femm.ei_drawrectangle(-2-24,0,-22-24,2);
-# femm.ei_drawrectangle(-100,-20,100,0);
 femm.ei_drawline(-120,-20,120,-20);
 femm.ei_drawarc(120,-20,-120,-20,180,2.5);
 
 
 
-
-# Add block labels for each strip and mark them with "No Mesh"
-# for k in range(0,4):
-	# femm.ei_addblocklabel(-36+k*24,1)
-# for k in range(0,4):
-	# femm.ei_selectlabel(-36+k*24,1)
-
 femm.ei_addmaterial('Iron',2500,2500,0);
-
 femm.ei_addblocklabel(11,1)
 femm.ei_selectlabel(11,1)
-
 femm.ei_addblocklabel(36,1)
 femm.ei_selectlabel(36,1)
-
-
-
-# femm.ei_setblockprop('<No Mesh>',0,1,0);
 femm.ei_setblockprop('Iron',0,1,0);
 femm.ei_clearselected();
 
@@ -163,14 +147,6 @@ femm.ei_zoomnatural();
 # Save the geometry to disk so we can analyze it
 femm.ei_saveas('./trash/strips.fee');
 
-# Create a placeholder matrix which we will fill with capacitance values
-c=[]
- 
-# for k in range(0,4):
-# femm.ei_modifyconductorprop('v0',1,1000);
-# femm.ei_modifyconductorprop('v1',1,-1000);
-# femm.ei_modifyconductorprop('v2',1,1 if (k==2) else 0);
-# femm.ei_modifyconductorprop('v3',1,1 if (k==3) else 0);
 femm.ei_analyze();
 femm.ei_loadsolution()
 # c.append([femm.eo_getconductorproperties('v0')[1],femm.eo_getconductorproperties('v1')[1],femm.eo_getconductorproperties('v2')[1], femm.eo_getconductorproperties('v3')[1]])
