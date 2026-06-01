@@ -83,7 +83,7 @@ femm.mi_clearselected()
 femm.mi_zoomnatural()
 
 # We have to give the geometry a name before we can analyze it.
-femm.mi_saveas('coil.fem');
+femm.mi_saveas('./trash/coil.fem');
 
 
 # Now,analyze the problem and load the solution when the analysis is finished
@@ -188,7 +188,7 @@ femm.ei_clearselected()
 femm.ei_zoomnatural();
 
 # Save the geometry to disk so we can analyze it
-femm.ei_saveas('strips.fee');
+femm.ei_saveas('./trash/strips.fee');
 
 # Create a placeholder matrix which we will fill with capacitance values
 c=[]
@@ -262,7 +262,7 @@ femm.ei_loadsolution()
 
 # ELECTIC PART END ---- back to magnetic part
 
-femm.mi_setfocus('coil.fem')
+# femm.mi_setfocus('./trash/coil.fem')
 
 
 # Add use less line
