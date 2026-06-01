@@ -189,15 +189,16 @@ vals = femm.mo_getcircuitproperties('icoil');
 # print('The self-inductance of the coil is %g mH' % L);
 
 # # Or we could, for example, plot the results along a line using 
-zee=[]
-bee=[]
+# zee=[]
+# bee=[]
 for n in range(-10,10):
-	b=femm.mo_getb(0,n);
+	# b=femm.mo_getb(0,n);
 	# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
-	_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n);
-	zee.append(n)
-	bee.append(b[1]);
-	print('At pos %d  B is %g Bx:%g By:%g' % (n,b[1],Bx,By))
+	_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
+	_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(2,n)
+	# zee.append(n)
+	# bee.append(b[1]);
+	print('At pos (2,%d)  Bx:%g By:%g Ex:%g Ey:%g' % (n, Bx, By, Ex, Ey))
 
 # TODO:: Add this here as V x B = F 
 # import numpy as np
