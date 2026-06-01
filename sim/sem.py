@@ -101,45 +101,35 @@ femm.ei_probdef('millimeters','planar',10**(-8),10**6,30);
 # femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 femm.ei_drawrectangle(2,0,22,2);
 femm.ei_drawrectangle(2+24,0,22+24,2);
-femm.ei_drawrectangle(-2,0,-22,2);
-femm.ei_drawrectangle(-2-24,0,-22-24,2);
+# femm.ei_drawrectangle(-2,0,-22,2);
+# femm.ei_drawrectangle(-2-24,0,-22-24,2);
 # femm.ei_drawrectangle(-100,-20,100,0);
 femm.ei_drawline(-120,-20,120,-20);
 femm.ei_drawarc(120,-20,-120,-20,180,2.5);
-# femm.ei_drawarc(100,100,120,100,180,2.5);
-# femm.ei_drawline(100,100,120,100);
 
-# Create and assign a "periodic" boundary condition to 
-# model an unbounded problem via the Kelvin Transformation
-# femm.ei_addboundprop('periodic',0,0,0,0,3);
-# femm.ei_selectarcsegment(0,100);
-# femm.ei_selectarcsegment(110,80);
-# femm.ei_setarcsegmentprop(2.5,'periodic',0,0,'<none>');
-# femm.ei_clearselected();
 
-# Define the ground plane in both the geometry and the exterior region
-# femm.ei_addboundprop('ground',0,0,0,0,0);
-# femm.ei_selectsegment(0,-20);
-# femm.ei_selectsegment(110,-20);
-# femm.ei_selectsegment(-110,-20);
-# femm.ei_selectsegment(110,100);
-# femm.ei_setsegmentprop('ground',0,1,0,0,'<none>');
-# femm.ei_clearselected();
+
 
 # Add block labels for each strip and mark them with "No Mesh"
-for k in range(0,4):
-	femm.ei_addblocklabel(-36+k*24,1)
-for k in range(0,4):
-	femm.ei_selectlabel(-36+k*24,1)
-femm.ei_setblockprop('<No Mesh>',0,1,0);
+# for k in range(0,4):
+	# femm.ei_addblocklabel(-36+k*24,1)
+# for k in range(0,4):
+	# femm.ei_selectlabel(-36+k*24,1)
+
+femm.ei_addmaterial('Iron',2500,2500,0);
+
+femm.ei_addblocklabel(11,1)
+femm.ei_selectlabel(11,1)
+
+femm.ei_addblocklabel(36,1)
+femm.ei_selectlabel(36,1)
+
+
+
+# femm.ei_setblockprop('<No Mesh>',0,1,0);
+femm.ei_setblockprop('Iron',0,1,0);
 femm.ei_clearselected();
 
-# Add and assign the block labels for the air and dielectric regions
-# femm.ei_addmaterial('dielectric',4,4,0);
-# femm.ei_addblocklabel(0,-10);
-# femm.ei_selectlabel(0,-10);
-# femm.ei_setblockprop('dielectric',0,1,0);
-# femm.ei_clearselected();
 
 femm.ei_addmaterial('air',1,1,0);
 femm.ei_addblocklabel(0,50);
@@ -152,36 +142,21 @@ femm.ei_addconductorprop('v0',2000,0,1);
 femm.ei_addconductorprop('v1',-2000,0,1);
 
 # Assign the "v0" properties to all sides of the first strip
-femm.ei_selectsegment(-46,1);
-femm.ei_selectsegment(-26,1);
-femm.ei_selectsegment(-36,2);
-femm.ei_selectsegment(-36,0);
+femm.ei_selectsegment(46,1);
+femm.ei_selectsegment(26,1);
+femm.ei_selectsegment(36,2);
+femm.ei_selectsegment(36,0);
 femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v0');
 femm.ei_clearselected()
 
 # Assign the "v1" properties to all sides of the second strip
-femm.ei_selectsegment(-46+24,1);
-femm.ei_selectsegment(-26+24,1);
-femm.ei_selectsegment(-36+24,2);
-femm.ei_selectsegment(-36+24,0);
+femm.ei_selectsegment(46-24,1);
+femm.ei_selectsegment(26-24,1);
+femm.ei_selectsegment(36-24,2);
+femm.ei_selectsegment(36-24,0);
 femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
 femm.ei_clearselected()
 
-# # Assign the "v2" properties to all sides of the third strip
-# femm.ei_selectsegment(-46+2*24,1);
-# femm.ei_selectsegment(-26+2*24,1);
-# femm.ei_selectsegment(-36+2*24,2);
-# femm.ei_selectsegment(-36+2*24,0);
-# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v2');
-# femm.ei_clearselected()
-
-# # Assign the "v3" properties to all sides of the fourth strip
-# femm.ei_selectsegment(-46+3*24,1);
-# femm.ei_selectsegment(-26+3*24,1);
-# femm.ei_selectsegment(-36+3*24,2);
-# femm.ei_selectsegment(-36+3*24,0);
-# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v3');
-# femm.ei_clearselected()
 
 femm.ei_zoomnatural();
 
