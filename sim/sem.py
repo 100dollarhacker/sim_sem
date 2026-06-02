@@ -129,8 +129,8 @@ femm.ei_setblockprop('air',0,1,0);
 femm.ei_clearselected();
 
 # Add a "Conductor Property" for each of the strips
-femm.ei_addconductorprop('v0',2000,0,1);
-femm.ei_addconductorprop('v1',-2000,0,1);
+femm.ei_addconductorprop('v0',-2000,0,1);
+femm.ei_addconductorprop('v1',2000,0,1);
 
 # Apply voltage v0 (+2000) on one of the electrodes
 femm.ei_selectsegment(0,51);
@@ -170,7 +170,7 @@ femm.ei_loadsolution()
 # 	femm.mi_addsegment(-n*5,-n*5,-(n+1)*5,-(n+1)*5)
 
 
-# # If we were interested in the flux density at specific positions, 
+# # If we were5afda6c79c86f819a9404f702ebb16d09986eb2cq interested in the flux density at specific positions, 
 # # we could inquire at specific points directly:
 # b0=femm.mo_getb(0,0);
 # print('Flux density at the center of the bar is %g T' % b0[1]);
@@ -193,13 +193,13 @@ femm.ei_loadsolution()
 # # bee=[]
 
 eM =  9.1e-31
-eQ = 1.6e-19
+eQ = -1.6e-19
 
 # start position
-pos = (2,10)
+pos = (2,50)
 v = (0,0)
 a = (0,0)
-t = 1e-9
+t = 1e-8
 
 
 
@@ -207,17 +207,17 @@ for n in range(-10,10):
 	# b=femm.mo_getb(0,n);
 	# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
 	# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
-	_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(2,n)
+	_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
 	# zee.append(n)
 	# bee.append(b[1]);
 	
-	print('Pos v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
+	# print('Pos v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
 	v = (v[0] + a[0]*t,v[1] + a[1]*t)
 	pos = (pos[0] + v[0]*t + a[0]*t*t/2,pos[1] + v[1]*t + a[1]*t*t/2)
 
 	# v = (v_n[0], v_n[1])
 	a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
-	# print('Pos @ n:%g x:%g y:%g', n, pos[0], pos[1])	
+	print('Pos @ n:%g x:%g y:%g', n, pos[0], pos[1])	
 
 
 
