@@ -100,8 +100,8 @@ femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 
 # Draw the geometry --- 
 # electrodes
-femm.ei_drawrectangle(0,50,100,52);
-femm.ei_drawrectangle(0,-50,100,-52);
+femm.ei_drawrectangle(0,50,50,52);
+femm.ei_drawrectangle(0,-50,50,-52);
 
 # envirnment enclusure
 # femm.ei_drawline(1,0,120,0);
@@ -197,7 +197,6 @@ eQ = -1.6e-19
 
 # start position
 pos = (0.1,50-0.1)
-# pos = (50-0.1,2)
 v = (0,0)
 a = (0,0)
 t = 1e-9
