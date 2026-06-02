@@ -196,7 +196,7 @@ eM =  9.1e-31
 eQ = -1.6e-19
 
 # start position
-pos = (0.1,50-0.1)
+pos = (1,50-0.1)
 v = (0,0)
 a = (0,0)
 t = 1e-9
@@ -204,7 +204,7 @@ t = 1e-9
 # F = E*q =m * a ==> a = E* q / 	m
 
 
-for n in range(-10,10):
+for n in range(0,6):
 	# b=femm.mo_getb(0,n);
 	# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
 	# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
@@ -219,8 +219,12 @@ for n in range(-10,10):
 	pos = (pos_m[0]*1000, pos_m[1]*1000)
 
 	# v = (v_n[0], v_n[1])
-	a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
+	# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
 	print('Pos @ n:%g x:%g y:%g', n, pos[0], pos[1])	
+
+	femm.ei_addnode(pos[0],pos[1])
+# 	femm.ei_addnode(-(n+1)*5,-(n+1)*5)
+# 	femm.ei_addsegment(-n*5,-n*5,-(n+1)*5,-(n+1)*5)
 
 
 
