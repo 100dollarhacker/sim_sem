@@ -100,8 +100,8 @@ femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 
 # Draw the geometry --- 
 # electrodes
-femm.ei_drawrectangle(0,50,10,52);
-femm.ei_drawrectangle(0,-50,10,-52);
+femm.ei_drawrectangle(0,50,100,52);
+femm.ei_drawrectangle(0,-50,100,-52);
 
 # envirnment enclusure
 # femm.ei_drawline(1,0,120,0);
@@ -196,11 +196,13 @@ eM =  9.1e-31
 eQ = -1.6e-19
 
 # start position
-pos = (2,50)
+pos = (0.1,50-0.1)
+# pos = (50-0.1,2)
 v = (0,0)
 a = (0,0)
-t = 1e-8
+t = 1e-9
 
+# F = E*q =m * a ==> a = E* q / 	m
 
 
 for n in range(-10,10):
@@ -211,9 +213,11 @@ for n in range(-10,10):
 	# zee.append(n)
 	# bee.append(b[1]);
 	
-	# print('Pos v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
+	print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
 	v = (v[0] + a[0]*t,v[1] + a[1]*t)
-	pos = (pos[0] + v[0]*t + a[0]*t*t/2,pos[1] + v[1]*t + a[1]*t*t/2)
+	a = (Ex*eQ/eM,Ey*eQ/eM)#a = (Ex, Ey)
+	pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2)
+	pos = (pos_m[0]*1000, pos_m[1]*1000)
 
 	# v = (v_n[0], v_n[1])
 	a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
