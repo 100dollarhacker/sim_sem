@@ -78,6 +78,11 @@ femm.mi_selectlabel(30,100);
 femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
 femm.mi_clearselected()
 
+# Add use less line
+for n in range(0,10):
+	femm.mi_addnode(n*5,n*5)
+	femm.mi_addnode((n+1)*5,(n+1)*5)
+	femm.mi_addsegment(n*5,n*5,(n+1)*5,(n+1)*5)
 
 # Now, the finished input geometry can be displayed.
 femm.mi_zoomnatural()
@@ -89,86 +94,6 @@ femm.mi_saveas('./trash/coil.fem');
 # Now,analyze the problem and load the solution when the analysis is finished
 femm.mi_analyze()
 femm.mi_loadsolution()
-
-# ELECTRIC PART ------------
-
-
-# Create a new electrostatics problem
-femm.newdocument(1)
-
-femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
-
-# Draw the geometry --- 
-# electrodes
-femm.ei_drawrectangle(2,0,22,2);
-femm.ei_drawrectangle(2+24,0,22+24,2);
-
-# envirnment enclusure
-femm.ei_drawline(1,0,120,0);
-femm.ei_drawline(1,200,120,200);
-femm.ei_drawline(1,0,1,200);
-femm.ei_drawline(120,0,120,200);
-
-
-
-# electrodes property
-femm.ei_addmaterial('Iron',2500,2500,0);
-femm.ei_addblocklabel(11,1)
-femm.ei_selectlabel(11,1)
-femm.ei_addblocklabel(36,1)
-femm.ei_selectlabel(36,1)
-femm.ei_setblockprop('Iron',0,1,0);
-femm.ei_clearselected();
-
-
-# env property
-femm.ei_addmaterial('air',1,1,0);
-femm.ei_addblocklabel(10,50);
-femm.ei_selectlabel(10,50);
-femm.ei_setblockprop('air',0,1,0);
-femm.ei_clearselected();
-
-# Add a "Conductor Property" for each of the strips
-femm.ei_addconductorprop('v0',2000,0,1);
-femm.ei_addconductorprop('v1',-2000,0,1);
-
-# Apply voltage v0 (+2000) on one of the electrodes
-femm.ei_selectsegment(46,1);
-femm.ei_selectsegment(26,1);
-femm.ei_selectsegment(36,2);
-femm.ei_selectsegment(36,0);
-femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v0');
-femm.ei_clearselected()
-
-# Assign the "v1" voltage on the other electorde
-femm.ei_selectsegment(46-24,1);
-femm.ei_selectsegment(26-24,1);
-femm.ei_selectsegment(36-24,2);
-femm.ei_selectsegment(36-24,0);
-femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
-femm.ei_clearselected()
-
-
-femm.ei_zoomnatural();
-
-# Save the geometry to disk so we can analyze it
-femm.ei_saveas('./trash/strips.fee');
-
-femm.ei_analyze();
-femm.ei_loadsolution()
-
-#
-# ELECTIC PART END ---- back to magnetic part
-
-# femm.mi_setfocus('./trash/coil.fem')
-
-
-# Add use less line
-for n in range(0,10):
-	femm.mi_addnode(-n*5,-n*5)
-	femm.mi_addnode(-(n+1)*5,-(n+1)*5)
-	femm.mi_addsegment(-n*5,-n*5,-(n+1)*5,-(n+1)*5)
-
 
 # If we were interested in the flux density at specific positions, 
 # we could inquire at specific points directly:
@@ -193,12 +118,11 @@ vals = femm.mo_getcircuitproperties('icoil');
 # bee=[]
 for n in range(-10,10):
 	# b=femm.mo_getb(0,n);
-	# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
 	_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
-	_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(2,n)
+	_,_,_,Ex,Ey,_,_,_ 			 = femm.eo_getpointvalues(2,n)
 	# zee.append(n)
 	# bee.append(b[1]);
-	print('At pos (2,%d)  Bx:%g By:%g Ex:%g Ey:%g' % (n, Bx, By, Ex, Ey))
+	print('At pos %d   Bx:%g By:%g Ex:%g Ey:%g ' % (n, Bx, By, Ex, Ey))
 
 # TODO:: Add this here as V x B = F 
 # import numpy as np
