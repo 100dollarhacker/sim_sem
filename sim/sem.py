@@ -181,38 +181,40 @@ femm.ei_loadsolution()
 eM =  9.1e-31
 eQ = -1.6e-19
 
-# start position
-pos = (1,50-0.1)
-v = (0,0)
-a = (0,0)
-t = 1e-9
 
-prev_pos = pos
+for i in range (0,5):
+	# start position
+	pos = (1 + i,50-0.1)
+	v = (0,0)
+	a = (0,0)
+	t = 1e-9
 
-for n in range(0,6):
-	# b=femm.mo_getb(0,n);
-	# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
-	# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
-	_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
-	# zee.append(n)
-	# bee.append(b[1]);
-	
-	# print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
-	v = (v[0] + a[0]*t,v[1] + a[1]*t)
-	# F = E*q =m * a ==> a = E* q / m
-	a = (Ex*eQ/eM,Ey*eQ/eM)#a = (Ex, Ey)
-
-	pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2)
-	pos = (pos_m[0]*1000, pos_m[1]*1000)
-
-	# v = (v_n[0], v_n[1])
-	# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
-	print('Pos @ n:%g x:%g y:%g  %g,%g', n, pos[0], pos[1], prev_pos[0], prev_pos[1])	
-
-	femm.ei_addnode(pos[0],pos[1])
-	femm.ei_addnode(prev_pos[0],prev_pos[1])
-	femm.ei_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
 	prev_pos = pos
+
+	for n in range(0,6):
+		# b=femm.mo_getb(0,n);
+		# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
+		# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
+		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
+		# zee.append(n)
+		# bee.append(b[1]);
+		
+		# print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
+		v = (v[0] + a[0]*t,v[1] + a[1]*t)
+		# F = E*q =m * a ==> a = E* q / m
+		a = (Ex*eQ/eM,Ey*eQ/eM)#a = (Ex, Ey)
+
+		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2)
+		pos = (pos_m[0]*1000, pos_m[1]*1000)
+
+		# v = (v_n[0], v_n[1])
+		# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
+		print('Pos @ n:%g x:%g y:%g  %g,%g', n, pos[0], pos[1], prev_pos[0], prev_pos[1])	
+
+		femm.ei_addnode(pos[0],pos[1])
+		femm.ei_addnode(prev_pos[0],prev_pos[1])
+		femm.ei_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+		prev_pos = pos
 
 
 
