@@ -1,18 +1,4 @@
-# Wound Copper Coil with an Iron Core
-# David Meeker
-# dmeeker@ieee.org
-#  
-# This program consider an axisymmetric magnetostatic problem
-# of a cylindrical coil with an axial length of 100 mm, an
-# inner radius of 50 mm, and an outer radius of 100 mm.  The
-# coil has 200 turns and the coil current is 20 Amps. There is
-# an iron bar 80 mm long with a radius of 10 mm centered co-
-# axially with the coil.  The objective of the analysis is to
-# determine the flux density at the center of the iron bar,
-# and to plot the field along the r=0 axis. This analysis
-# defines a nonlinear B-H curve for the iron and employs an
-# asymptotic boundary condition to approximate an "open"
-# boundary condition on the edge of the solution domain.
+# Combination of Electrical and Magnetic simulation 
   
 import femm
 import matplotlib.pyplot as plt
@@ -201,8 +187,7 @@ v = (0,0)
 a = (0,0)
 t = 1e-9
 
-# F = E*q =m * a ==> a = E* q / 	m
-
+prev_pos = pos
 
 for n in range(0,6):
 	# b=femm.mo_getb(0,n);
@@ -212,19 +197,22 @@ for n in range(0,6):
 	# zee.append(n)
 	# bee.append(b[1]);
 	
-	print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
+	# print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
 	v = (v[0] + a[0]*t,v[1] + a[1]*t)
+	# F = E*q =m * a ==> a = E* q / m
 	a = (Ex*eQ/eM,Ey*eQ/eM)#a = (Ex, Ey)
+
 	pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2)
 	pos = (pos_m[0]*1000, pos_m[1]*1000)
 
 	# v = (v_n[0], v_n[1])
 	# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
-	print('Pos @ n:%g x:%g y:%g', n, pos[0], pos[1])	
+	print('Pos @ n:%g x:%g y:%g  %g,%g', n, pos[0], pos[1], prev_pos[0], prev_pos[1])	
 
 	femm.ei_addnode(pos[0],pos[1])
-# 	femm.ei_addnode(-(n+1)*5,-(n+1)*5)
-# 	femm.ei_addsegment(-n*5,-n*5,-(n+1)*5,-(n+1)*5)
+	femm.ei_addnode(prev_pos[0],prev_pos[1])
+	femm.ei_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+	prev_pos = pos
 
 
 
