@@ -19,15 +19,15 @@ femm.mi_probdef(0, 'millimeters', 'axi', 1.e-8, 0, 30);
 # femm.mi_drawrectangle(0, -10, 10, 10);
 
 # Draw a rectangle for the coil;
-femm.mi_drawrectangle(50, -50, 100, 50);
+femm.mi_drawrectangle(15, 0, 30, 20);
 
 # Define an "open" boundary condition using the built-in function:
 femm.mi_makeABC()
 
 # Add block labels, one to each the steel, coil, and air regions.
 # femm.mi_addblocklabel(5,0);
-femm.mi_addblocklabel(75,0);
-femm.mi_addblocklabel(30,100);
+femm.mi_addblocklabel(5,0);
+femm.mi_addblocklabel(20,10);
 
 # Add some block labels materials properties
 femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
@@ -49,18 +49,20 @@ femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
 
 # Add a "circuit property" so that we can calculate the properties of the
 # coil as seen from the terminals.
-femm.mi_addcircprop('icoil', 20, 0);
+# 200 too little
+# 2000 too much 1000 700 500
+femm.mi_addcircprop('icoil', 400, 0);
 
 # Apply the materials to the appropriate block labels
 # femm.mi_selectlabel(5,0);
 # femm.mi_setblockprop('Iron', 0, 1, '<None>', 0, 0, 0);
 # femm.mi_clearselected()
 
-femm.mi_selectlabel(75,0);
-femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 0, 200);
+femm.mi_selectlabel(20,10);
+femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 1, 5);
 femm.mi_clearselected()
 
-femm.mi_selectlabel(30,100);
+femm.mi_selectlabel(5,0);
 femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
 femm.mi_clearselected()
 
@@ -180,27 +182,30 @@ femm.ei_loadsolution()
 
 eM =  9.1e-31
 eQ = -1.6e-19
-
+t = 1e-10  # simulation time interval
+ 
 
 for i in range (0,5):
 	# start position
 	pos = (1 + i,50-0.1,0)
 	v = (0,0,0)
 	a = (0,0,0)
-	t = 1e-9
 
 	prev_pos = pos
 
-	for n in range(0,6):
+	for n in range(0,60):
 		# b=femm.mo_getb(0,n);
 		# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
 		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
+		# Bx= 0
+		# By = 0
+
 		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
 		# zee.append(n)
 		# bee.append(b[1]);
 		
-		# print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
-		v = (v[0] + a[0]*t,v[1] + a[1]*t, a[2] *t)
+		print('                                                   V/A v(%g,%g,%g) a(%g,%g,%g) ' % (v[0], v[1],v[2], a[0], a[1], a[2]))
+		v = (v[0] + a[0]*t,v[1] + a[1]*t, v[2] + a[2] *t)
 		# F = E*q =m * a ==> a = E* q / m
 
 			
@@ -208,8 +213,10 @@ for i in range (0,5):
 
 
 
-		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2, pos[2]/1000 + v[1]*t + a[2]*t*t/2)
+		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2, pos[2]/1000 + v[2]*t + a[2]*t*t/2)
 		pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
+
+		# pos_radial
 
 		# v = (v_n[0], v_n[1])
 		# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
