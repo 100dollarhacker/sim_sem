@@ -51,7 +51,7 @@ femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
 # coil as seen from the terminals.
 # 200 too little
 # 2000 too much 1000 700 500
-femm.mi_addcircprop('icoil', 400, 0);
+femm.mi_addcircprop('icoil', 420, 0);
 
 # Apply the materials to the appropriate block labels
 # femm.mi_selectlabel(5,0);
@@ -185,9 +185,9 @@ eQ = -1.6e-19
 t = 1e-10  # simulation time interval
  
 
-for i in range (0,5):
+for i in range (0,15):
 	# start position
-	pos = (1 + i,50-0.1,0)
+	pos = (1 + i/3,50-0.1,0)
 	v = (0,0,0)
 	a = (0,0,0)
 
