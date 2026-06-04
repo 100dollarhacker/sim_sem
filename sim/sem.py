@@ -6,75 +6,75 @@ import matplotlib.pyplot as plt
 # The package must be initialized with the openfemm command.
 femm.openfemm();
 
-# # We need to create a new Magnetostatics document to work on.
-# femm.newdocument(0);
+# We need to create a new Magnetostatics document to work on.
+femm.newdocument(0);
 
-# # Define the problem type.  Magnetostatic; Units of mm; Axisymmetric; 
-# # Precision of 10^(-8) for the linear solver; a placeholder of 0 for 
-# # the depth dimension, and an angle constraint of 30 degrees
-# femm.mi_probdef(0, 'millimeters', 'axi', 1.e-8, 0, 30);
-# #femm.mi_probdef(0, 'millimeters', 'planar', 1.e-8, 0, 30);
+# Define the problem type.  Magnetostatic; Units of mm; Axisymmetric; 
+# Precision of 10^(-8) for the linear solver; a placeholder of 0 for 
+# the depth dimension, and an angle constraint of 30 degrees
+femm.mi_probdef(0, 'millimeters', 'axi', 1.e-8, 0, 30);
+#femm.mi_probdef(0, 'millimeters', 'planar', 1.e-8, 0, 30);
 
-# # Draw a rectangle for the steel bar on the axis;
-# # femm.mi_drawrectangle(0, -10, 10, 10);
+# Draw a rectangle for the steel bar on the axis;
+# femm.mi_drawrectangle(0, -10, 10, 10);
 
-# # Draw a rectangle for the coil;
-# femm.mi_drawrectangle(50, -50, 100, 50);
+# Draw a rectangle for the coil;
+femm.mi_drawrectangle(50, -50, 100, 50);
 
-# # Define an "open" boundary condition using the built-in function:
-# femm.mi_makeABC()
+# Define an "open" boundary condition using the built-in function:
+femm.mi_makeABC()
 
-# # Add block labels, one to each the steel, coil, and air regions.
-# # femm.mi_addblocklabel(5,0);
-# femm.mi_addblocklabel(75,0);
-# femm.mi_addblocklabel(30,100);
+# Add block labels, one to each the steel, coil, and air regions.
+# femm.mi_addblocklabel(5,0);
+femm.mi_addblocklabel(75,0);
+femm.mi_addblocklabel(30,100);
 
-# # Add some block labels materials properties
-# femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-# femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
-# # femm.mi_addmaterial('LinearIron', 2100, 2100, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+# Add some block labels materials properties
+femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
+# femm.mi_addmaterial('LinearIron', 2100, 2100, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 
-# # A more interesting material to add is the iron with a nonlinear
-# # BH curve.  First, we create a material in the same way as if we 
-# # were creating a linear material, except the values used for 
-# # permeability are merely placeholders.
+# A more interesting material to add is the iron with a nonlinear
+# BH curve.  First, we create a material in the same way as if we 
+# were creating a linear material, except the values used for 
+# permeability are merely placeholders.
 
-# # femm.mi_addmaterial('Iron', 2100, 2100, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+# femm.mi_addmaterial('Iron', 2100, 2100, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 
-# # A set of points defining the BH curve is then specified.
-# # bdata = [ 0.,0.3,0.8,1.12,1.32,1.46,1.54,1.62,1.74,1.87,1.99,2.046,2.08]; 
-# # hdata = [ 0, 40, 80, 160, 318, 796, 1590, 3380, 7960, 15900, 31800, 55100, 79600];
-# # for n in range(0,len(bdata)):
-# # 	femm.mi_addbhpoint('Iron', bdata[n],hdata[n]);
+# A set of points defining the BH curve is then specified.
+# bdata = [ 0.,0.3,0.8,1.12,1.32,1.46,1.54,1.62,1.74,1.87,1.99,2.046,2.08]; 
+# hdata = [ 0, 40, 80, 160, 318, 796, 1590, 3380, 7960, 15900, 31800, 55100, 79600];
+# for n in range(0,len(bdata)):
+# 	femm.mi_addbhpoint('Iron', bdata[n],hdata[n]);
 
-# # Add a "circuit property" so that we can calculate the properties of the
-# # coil as seen from the terminals.
-# femm.mi_addcircprop('icoil', 20, 0);
+# Add a "circuit property" so that we can calculate the properties of the
+# coil as seen from the terminals.
+femm.mi_addcircprop('icoil', 20, 0);
 
-# # Apply the materials to the appropriate block labels
-# # femm.mi_selectlabel(5,0);
-# # femm.mi_setblockprop('Iron', 0, 1, '<None>', 0, 0, 0);
-# # femm.mi_clearselected()
-
-# femm.mi_selectlabel(75,0);
-# femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 0, 200);
+# Apply the materials to the appropriate block labels
+# femm.mi_selectlabel(5,0);
+# femm.mi_setblockprop('Iron', 0, 1, '<None>', 0, 0, 0);
 # femm.mi_clearselected()
 
-# femm.mi_selectlabel(30,100);
-# femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
-# femm.mi_clearselected()
+femm.mi_selectlabel(75,0);
+femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 0, 200);
+femm.mi_clearselected()
+
+femm.mi_selectlabel(30,100);
+femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
+femm.mi_clearselected()
 
 
-# # Now, the finished input geometry can be displayed.
-# femm.mi_zoomnatural()
+# Now, the finished input geometry can be displayed.
+femm.mi_zoomnatural()
 
-# # We have to give the geometry a name before we can analyze it.
-# femm.mi_saveas('./trash/coil.fem');
+# We have to give the geometry a name before we can analyze it.
+femm.mi_saveas('./trash/coil.fem');
 
 
-# # Now,analyze the problem and load the solution when the analysis is finished
-# femm.mi_analyze()
-# femm.mi_loadsolution()
+# Now,analyze the problem and load the solution when the analysis is finished
+femm.mi_analyze()
+femm.mi_loadsolution()
 
 # ELECTRIC PART ------------
 
@@ -86,8 +86,8 @@ femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 
 # Draw the geometry --- 
 # electrodes
-femm.ei_drawrectangle(0,50,50,52);
-femm.ei_drawrectangle(0,-50,50,-52);
+femm.ei_drawrectangle(0,50,12,52);
+femm.ei_drawrectangle(0,-50,12,-52);
 
 # envirnment enclusure
 # femm.ei_drawline(1,0,120,0);
@@ -184,9 +184,9 @@ eQ = -1.6e-19
 
 for i in range (0,5):
 	# start position
-	pos = (1 + i,50-0.1)
-	v = (0,0)
-	a = (0,0)
+	pos = (1 + i,50-0.1,0)
+	v = (0,0,0)
+	a = (0,0,0)
 	t = 1e-9
 
 	prev_pos = pos
@@ -194,22 +194,26 @@ for i in range (0,5):
 	for n in range(0,6):
 		# b=femm.mo_getb(0,n);
 		# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
-		# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(2,n)
+		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
 		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
 		# zee.append(n)
 		# bee.append(b[1]);
 		
 		# print('                                                   V/A v(%g,%g) a(%g,%g) ' % (v[0], v[1], a[0], a[1]))
-		v = (v[0] + a[0]*t,v[1] + a[1]*t)
+		v = (v[0] + a[0]*t,v[1] + a[1]*t, a[2] *t)
 		# F = E*q =m * a ==> a = E* q / m
-		a = (Ex*eQ/eM,Ey*eQ/eM)#a = (Ex, Ey)
 
-		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2)
-		pos = (pos_m[0]*1000, pos_m[1]*1000)
+			
+		a = (Ex*eQ/eM + v[2]*By*eQ/eM,Ey*eQ/eM + v[2]*Bx*eQ/eM, (v[1]*Bx + v[0]*By)*eQ/eM )
+
+
+
+		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2, pos[2]/1000 + v[1]*t + a[2]*t*t/2)
+		pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
 
 		# v = (v_n[0], v_n[1])
 		# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
-		print('Pos @ n:%g x:%g y:%g  %g,%g', n, pos[0], pos[1], prev_pos[0], prev_pos[1])	
+		print('Pos @ n:%g x:%g y:%g z:%g  %g,%g,%g' % (n, pos[0], pos[1], pos[2], prev_pos[0], prev_pos[1], prev_pos[2]))	
 
 		femm.ei_addnode(pos[0],pos[1])
 		femm.ei_addnode(prev_pos[0],prev_pos[1])
