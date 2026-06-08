@@ -18,8 +18,30 @@ femm.mi_probdef(0, 'millimeters', 'axi', 1.e-8, 0, 30);
 # Draw a rectangle for the steel bar on the axis;
 # femm.mi_drawrectangle(0, -10, 10, 10);
 
-# Draw a rectangle for the coil;
-femm.mi_drawrectangle(15, 0, 30, 20);
+# Add some block labels materials properties
+femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
+
+
+def addCoil(x0,y0, x1,y1, femm):
+	print('Adding magnetic coil at (%g,%g)<>(%g,%g)' % (x0, y0, x1, y1))
+
+	# Draw a rectangle for the coil;
+	femm.mi_drawrectangle(x0, y0, x1, y1);
+
+	femm.mi_addblocklabel((x0 + x1)/2,(y0 + y1)/2);
+
+
+	# Add a "circuit property" so that we can calculate the properties of the
+	# coil as seen from the terminals.
+	femm.mi_addcircprop('icoil', 320, 0);
+	
+	femm.mi_selectlabel(20,10);
+	femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 1, 5);
+	femm.mi_clearselected()
+
+
+addCoil(15, 0, 30, 20, femm)
 
 # Define an "open" boundary condition using the built-in function:
 femm.mi_makeABC()
@@ -27,40 +49,9 @@ femm.mi_makeABC()
 # Add block labels, one to each the steel, coil, and air regions.
 # femm.mi_addblocklabel(5,0);
 femm.mi_addblocklabel(5,0);
-femm.mi_addblocklabel(20,10);
 
-# Add some block labels materials properties
-femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
-# femm.mi_addmaterial('LinearIron', 2100, 2100, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 
-# A more interesting material to add is the iron with a nonlinear
-# BH curve.  First, we create a material in the same way as if we 
-# were creating a linear material, except the values used for 
-# permeability are merely placeholders.
 
-# femm.mi_addmaterial('Iron', 2100, 2100, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-
-# A set of points defining the BH curve is then specified.
-# bdata = [ 0.,0.3,0.8,1.12,1.32,1.46,1.54,1.62,1.74,1.87,1.99,2.046,2.08]; 
-# hdata = [ 0, 40, 80, 160, 318, 796, 1590, 3380, 7960, 15900, 31800, 55100, 79600];
-# for n in range(0,len(bdata)):
-# 	femm.mi_addbhpoint('Iron', bdata[n],hdata[n]);
-
-# Add a "circuit property" so that we can calculate the properties of the
-# coil as seen from the terminals.
-# 200 too little
-# 2000 too much 1000 700 500
-femm.mi_addcircprop('icoil', 420, 0);
-
-# Apply the materials to the appropriate block labels
-# femm.mi_selectlabel(5,0);
-# femm.mi_setblockprop('Iron', 0, 1, '<None>', 0, 0, 0);
-# femm.mi_clearselected()
-
-femm.mi_selectlabel(20,10);
-femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 1, 5);
-femm.mi_clearselected()
 
 femm.mi_selectlabel(5,0);
 femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
@@ -117,8 +108,8 @@ femm.ei_setblockprop('air',0,1,0);
 femm.ei_clearselected();
 
 # Add a "Conductor Property" for each of the strips
-femm.ei_addconductorprop('v0',-2000,0,1);
-femm.ei_addconductorprop('v1',2000,0,1);
+femm.ei_addconductorprop('v0',-500,0,1);
+femm.ei_addconductorprop('v1',500,0,1);
 
 # Apply voltage v0 (+2000) on one of the electrodes
 femm.ei_selectsegment(0,51);
@@ -187,7 +178,7 @@ t = 1e-10  # simulation time interval
 
 for i in range (0,15):
 	# start position
-	pos = (1 + i/3,50-0.1,0)
+	pos = (0.01 + i/3,50-0.1,0)
 	v = (0,0,0)
 	a = (0,0,0)
 
