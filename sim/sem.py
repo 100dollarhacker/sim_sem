@@ -40,6 +40,8 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	femm.mi_setblockprop('Coil', 0, 1, 'icoil'+name, deg, 0, 1);
 	femm.mi_clearselected()
 
+	
+
 
 addCoil(10, 20, 15, 30, 180, 180 ,"-A", femm)
 addCoil(10, -40, 15, -30, 0, 780,"-B" , femm)
@@ -71,6 +73,16 @@ femm.mi_saveas('./trash/coil.fem');
 femm.mi_analyze()
 femm.mi_loadsolution()
 
+# Nice, but I am not sure it's gives real values.
+coilName = "-B"
+vals = femm.mo_getcircuitproperties('icoil'+coilName);
+
+# If we were interested in inductance, it could be obtained by
+# dividing flux linkage by current
+L = 1000*vals[2]/vals[0];
+print('The self-inductance of the coil-%s is %g mH' % (coilName,L));
+
+
 # ELECTRIC PART ------------
 
 
@@ -84,11 +96,6 @@ femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 femm.ei_drawrectangle(0,50,12,52);
 femm.ei_drawrectangle(0,-50,12,-52);
 
-# envirnment enclusure
-# femm.ei_drawline(1,0,120,0);
-# femm.ei_drawline(1,200,120,200);
-# femm.ei_drawline(1,0,1,200);
-# femm.ei_drawline(120,0,120,200);
 femm.ei_makeABC()
 
 
@@ -141,37 +148,6 @@ femm.ei_loadsolution()
 #
 # ELECTIC PART END ---- back to magnetic part
 
-# femm.mi_setfocus('./trash/coil.fem')
-
-
-# # Add use less line
-# for n in range(0,10):
-# 	femm.mi_addnode(-n*5,-n*5)
-# 	femm.mi_addnode(-(n+1)*5,-(n+1)*5)
-# 	femm.mi_addsegment(-n*5,-n*5,-(n+1)*5,-(n+1)*5)
-
-
-# # If we were5afda6c79c86f819a9404f702ebb16d09986eb2cq interested in the flux density at specific positions, 
-# # we could inquire at specific points directly:
-# b0=femm.mo_getb(0,0);
-# print('Flux density at the center of the bar is %g T' % b0[1]);
-# b1=femm.mo_getb(0,50);
-# print('Flux density at r=0,z=50 is %g T' % b1[1]);
-
-# # The program will report the terminal properties of the circuit:
-# # current, voltage, and flux linkage 
-# vals = femm.mo_getcircuitproperties('icoil');
-
-# # # [i, v, \[Phi]] = MOGetCircuitProperties["icoil"]
-
-# # # If we were interested in inductance, it could be obtained by
-# # # dividing flux linkage by current
-# # L = 1000*vals[2]/vals[0];
-# # print('The self-inductance of the coil is %g mH' % L);
-
-# # # Or we could, for example, plot the results along a line using 
-# # zee=[]
-# # bee=[]
 
 eM =  9.1e-31
 eQ = -1.6e-19
@@ -190,15 +166,9 @@ for i in range (0,THREAD_NUM): # t
 	prev_pos = pos
 
 	for n in range(0,SIMULATION_POINTS):
-		# b=femm.mo_getb(0,n);
-		# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
 		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
-		# Bx= 0
-		# By = 0
 
 		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
-		# zee.append(n)
-		# bee.append(b[1]);
 		
 		print('                                                   V/A v(%g,%g,%g) a(%g,%g,%g) ' % (v[0], v[1],v[2], a[0], a[1], a[2]))
 		v = (v[0] + a[0]*t,v[1] + a[1]*t, v[2] + a[2] *t)
@@ -218,11 +188,6 @@ for i in range (0,THREAD_NUM): # t
 
 		pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
 
-
-
-		# pos_radial
-
-		# v = (v_n[0], v_n[1])
 		# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
 		print('Pos @ n:%g x:%g y:%g z:%g  %g,%g,%g' % (n, pos[0], pos[1], pos[2], prev_pos[0], prev_pos[1], prev_pos[2]))	
 
@@ -236,23 +201,6 @@ for i in range (0,THREAD_NUM): # t
 
 		prev_pos = pos
 
-
-
-
-	# print('At pos (2,%d)  Bx:%g By:%g Ex:%g Ey:%g' % (n, Bx, By, Ex, Ey))
-
-# TODO:: Add this here as V x B = F 
-# import numpy as np
-# a = np.array([1,0,0])  
-# b = np.array([0,1,0])  
-# #print the result    
-# print(np.cross(a,b))
-
-# plt.plot(zee,bee)
-# plt.ylabel('Flux Density, Tesla')
-# plt.xlabel('Distance along the z-axis, mm')
-# plt.title('Plot of flux density along the axis')
-# plt.show()
 
 femm.prompt('Press <ENTER> to continue')
 
