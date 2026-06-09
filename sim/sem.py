@@ -23,7 +23,7 @@ femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
 
 
-def addCoil(x0,y0, x1,y1, femm):
+def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	print('Adding magnetic coil at (%g,%g)<>(%g,%g)' % (x0, y0, x1, y1))
 
 	# Draw a rectangle for the coil;
@@ -34,14 +34,16 @@ def addCoil(x0,y0, x1,y1, femm):
 
 	# Add a "circuit property" so that we can calculate the properties of the
 	# coil as seen from the terminals.
-	femm.mi_addcircprop('icoil', 320, 0);
+	femm.mi_addcircprop('icoil'+name, B, 0);
 	
-	femm.mi_selectlabel(20,10);
-	femm.mi_setblockprop('Coil', 0, 1, 'icoil', 0, 1, 5);
+	femm.mi_selectlabel((x0 + x1)/2,(y0 + y1)/2);
+	femm.mi_setblockprop('Coil', 0, 1, 'icoil'+name, deg, 0, 1);
 	femm.mi_clearselected()
 
 
-addCoil(15, 0, 30, 20, femm)
+addCoil(10, 20, 15, 30, 180, 180 ,"-A", femm)
+addCoil(10, -40, 15, -30, 0, 780,"-B" , femm)
+
 
 # Define an "open" boundary condition using the built-in function:
 femm.mi_makeABC()
@@ -173,10 +175,13 @@ femm.ei_loadsolution()
 
 eM =  9.1e-31
 eQ = -1.6e-19
+THREAD_NUM = 15
+SIMULATION_POINTS = 100
 t = 1e-10  # simulation time interval
- 
 
-for i in range (0,15):
+
+
+for i in range (0,THREAD_NUM): # t
 	# start position
 	pos = (0.01 + i/3,50-0.1,0)
 	v = (0,0,0)
@@ -184,7 +189,7 @@ for i in range (0,15):
 
 	prev_pos = pos
 
-	for n in range(0,60):
+	for n in range(0,SIMULATION_POINTS):
 		# b=femm.mo_getb(0,n);
 		# ma01,Bx,By,ma04,ma05,ma06,ma07,ma08,ma09,ma10,ma11,ma12,ma13,ma14 = femm.mo_getpointvalues(2,n);
 		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
@@ -205,7 +210,15 @@ for i in range (0,15):
 
 
 		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2, pos[2]/1000 + v[2]*t + a[2]*t*t/2)
+		
+		#Mirror particles
+		if pos_m[0] < 0:
+			pos_m = (-pos_m[0],pos_m[1],pos_m[2])
+			v = (-v[0],v[1],v[2])
+
 		pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
+
+
 
 		# pos_radial
 
@@ -216,6 +229,11 @@ for i in range (0,15):
 		femm.ei_addnode(pos[0],pos[1])
 		femm.ei_addnode(prev_pos[0],prev_pos[1])
 		femm.ei_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+
+		femm.mi_addnode(pos[0],pos[1])
+		femm.mi_addnode(prev_pos[0],prev_pos[1])
+		femm.mi_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+
 		prev_pos = pos
 
 
