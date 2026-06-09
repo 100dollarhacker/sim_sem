@@ -44,7 +44,7 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 
 
 addCoil(10, 20, 15, 30, 180, 180 ,"-A", femm)
-addCoil(10, -40, 15, -30, 0, 780,"-B" , femm)
+addCoil(10, -60, 15, -50, 0, 780,"-B" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
@@ -153,6 +153,7 @@ eM =  9.1e-31
 eQ = -1.6e-19
 THREAD_NUM = 15
 SIMULATION_POINTS = 100
+ANODE_LEVEL = -52 # This should be set automatically as part of Anode/Cathode creation
 t = 1e-10  # simulation time interval
 
 
@@ -164,8 +165,13 @@ for i in range (0,THREAD_NUM): # t
 	a = (0,0,0)
 
 	prev_pos = pos
+	run = True
 
 	for n in range(0,SIMULATION_POINTS):
+
+		if not run:
+			continue
+
 		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
 
 		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
@@ -188,8 +194,14 @@ for i in range (0,THREAD_NUM): # t
 
 		pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
 
+
+
 		# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
 		print('Pos @ n:%g x:%g y:%g z:%g  %g,%g,%g' % (n, pos[0], pos[1], pos[2], prev_pos[0], prev_pos[1], prev_pos[2]))	
+
+		if pos[1] < ANODE_LEVEL:
+			run = False
+			continue
 
 		femm.ei_addnode(pos[0],pos[1])
 		femm.ei_addnode(prev_pos[0],prev_pos[1])
