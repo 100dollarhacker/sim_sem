@@ -44,7 +44,7 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 
 
 addCoil(10, 20, 15, 30, 180, 180 ,"-A", femm)
-addCoil(10, -60, 15, -50, 0, 780,"-B" , femm)
+addCoil(10, -60, 15, -50, 0, -3080,"-B" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
@@ -93,20 +93,54 @@ femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 
 # Draw the geometry --- 
 # electrodes
-femm.ei_drawrectangle(0,50,12,52);
-femm.ei_drawrectangle(0,-50,12,-52);
+# femm.ei_drawrectangle(0,50,12,52);
+# femm.ei_drawrectangle(0,-50,12,-52);
+
+femm.ei_addmaterial('Iron',2500,2500,0);
+
+# def addCoil(x0,y0, x1,y1, deg, B,name, femm):
+
+def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
+
+	femm.ei_drawrectangle(x0,y0,x1,y1)
+	femm.ei_addblocklabel((x0 + x1)/2,(y0+y1)/2)
+	femm.ei_selectlabel((x0 + x1)/2,(y0+y1)/2)
+	femm.ei_setblockprop(material,0,1,0);
+	femm.ei_clearselected();
+
+	# Add a "Conductor Property" for each of the strips
+	# femm.ei_addconductorprop('v0',-500,0,1);
+	femm.ei_addconductorprop(name,voltage,0,1);
+
+	# Apply voltage v0 (+2000) on one of the electrodes
+	femm.ei_selectsegment(x0,(y1+y0)/2);
+	femm.ei_selectsegment(x1,(y0+y1)/2);
+	femm.ei_selectsegment((x0 + x1)/2,y1);
+	femm.ei_selectsegment((x0 + x1)/2,y0);
+	femm.ei_setsegmentprop('<None>',0.25,0,0,0,name);
+	femm.ei_clearselected()
+
+# # Assign the "v1" voltage on the other electorde
+# femm.ei_selectsegment(0,-51);
+# femm.ei_selectsegment(10,-51);
+# femm.ei_selectsegment(5,-52);
+# femm.ei_selectsegment(5,-50);
+# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
+# femm.ei_clearselected()
+
+
+addElectrode(0,50,12,52,'v1', -500, 'Iron', femm)
+addElectrode(0,-50,12,-52,'v0', 500, 'Iron', femm)
 
 femm.ei_makeABC()
 
-
 # electrodes property
-femm.ei_addmaterial('Iron',2500,2500,0);
-femm.ei_addblocklabel(5,51)
-femm.ei_selectlabel(5,51)
-femm.ei_addblocklabel(5,-51)
-femm.ei_selectlabel(5,-51)
-femm.ei_setblockprop('Iron',0,1,0);
-femm.ei_clearselected();
+# femm.ei_addblocklabel(5,51)
+# femm.ei_selectlabel(5,51)
+# femm.ei_addblocklabel(5,-51)
+# femm.ei_selectlabel(5,-51)
+# femm.ei_setblockprop('Iron',0,1,0);
+# femm.ei_clearselected();
 
 
 # env property
@@ -116,25 +150,25 @@ femm.ei_selectlabel(50,10);
 femm.ei_setblockprop('air',0,1,0);
 femm.ei_clearselected();
 
-# Add a "Conductor Property" for each of the strips
-femm.ei_addconductorprop('v0',-500,0,1);
-femm.ei_addconductorprop('v1',500,0,1);
+# # Add a "Conductor Property" for each of the strips
+# femm.ei_addconductorprop('v0',-500,0,1);
+# femm.ei_addconductorprop('v1',500,0,1);
 
-# Apply voltage v0 (+2000) on one of the electrodes
-femm.ei_selectsegment(0,51);
-femm.ei_selectsegment(10,51);
-femm.ei_selectsegment(5,52);
-femm.ei_selectsegment(5,50);
-femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v0');
-femm.ei_clearselected()
+# # Apply voltage v0 (+2000) on one of the electrodes
+# femm.ei_selectsegment(0,51);
+# femm.ei_selectsegment(10,51);
+# femm.ei_selectsegment(5,52);
+# femm.ei_selectsegment(5,50);
+# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v0');
+# femm.ei_clearselected()
 
-# Assign the "v1" voltage on the other electorde
-femm.ei_selectsegment(0,-51);
-femm.ei_selectsegment(10,-51);
-femm.ei_selectsegment(5,-52);
-femm.ei_selectsegment(5,-50);
-femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
-femm.ei_clearselected()
+# # Assign the "v1" voltage on the other electorde
+# femm.ei_selectsegment(0,-51);
+# femm.ei_selectsegment(10,-51);
+# femm.ei_selectsegment(5,-52);
+# femm.ei_selectsegment(5,-50);
+# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
+# femm.ei_clearselected()
 
 
 femm.ei_zoomnatural();
@@ -151,7 +185,7 @@ femm.ei_loadsolution()
 
 eM =  9.1e-31
 eQ = -1.6e-19
-THREAD_NUM = 15
+THREAD_NUM = 10
 SIMULATION_POINTS = 100
 ANODE_LEVEL = -52 # This should be set automatically as part of Anode/Cathode creation
 t = 1e-10  # simulation time interval
@@ -160,7 +194,7 @@ t = 1e-10  # simulation time interval
 
 for i in range (0,THREAD_NUM): # t
 	# start position
-	pos = (0.01 + i/3,50-0.1,0)
+	pos = (0.01 + i/10,50-0.1,0)
 	v = (0,0,0)
 	a = (0,0,0)
 
