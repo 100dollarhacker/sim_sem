@@ -2,6 +2,17 @@
   
 import femm
 import matplotlib.pyplot as plt
+import math
+
+
+eM =  9.1e-31
+eQ = -1.6e-19
+THREAD_NUM = 10
+SIMULATION_POINTS = 100
+ANODE_LEVEL = -50 # This should be set automatically as part of Anode/Cathode creation
+t = 1e-10  # simulation time interval
+
+
 
 # The package must be initialized with the openfemm command.
 femm.openfemm();
@@ -43,8 +54,9 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	
 
 
-addCoil(10, 20, 15, 30, 180, 180 ,"-A", femm)
-addCoil(10, -60, 15, -50, 0, -3080,"-B" , femm)
+addCoil(10, 20, 15, 30, 180, -180 ,"-A", femm)
+# addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
+addCoil(5, -5, 15, 0, 180, -838,"-B" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
@@ -52,12 +64,8 @@ femm.mi_makeABC()
 
 # Add block labels, one to each the steel, coil, and air regions.
 # femm.mi_addblocklabel(5,0);
-femm.mi_addblocklabel(5,0);
-
-
-
-
-femm.mi_selectlabel(5,0);
+femm.mi_addblocklabel(5,20);
+femm.mi_selectlabel(5,20);
 femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
 femm.mi_clearselected()
 
@@ -91,11 +99,6 @@ femm.newdocument(1)
 
 femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 
-# Draw the geometry --- 
-# electrodes
-# femm.ei_drawrectangle(0,50,12,52);
-# femm.ei_drawrectangle(0,-50,12,-52);
-
 femm.ei_addmaterial('Iron',2500,2500,0);
 
 # def addCoil(x0,y0, x1,y1, deg, B,name, femm):
@@ -120,27 +123,12 @@ def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 	femm.ei_setsegmentprop('<None>',0.25,0,0,0,name);
 	femm.ei_clearselected()
 
-# # Assign the "v1" voltage on the other electorde
-# femm.ei_selectsegment(0,-51);
-# femm.ei_selectsegment(10,-51);
-# femm.ei_selectsegment(5,-52);
-# femm.ei_selectsegment(5,-50);
-# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
-# femm.ei_clearselected()
-
-
-addElectrode(0,50,12,52,'v1', -500, 'Iron', femm)
-addElectrode(0,-50,12,-52,'v0', 500, 'Iron', femm)
+# Draw the geometry --- Electric
+# electrodes
+addElectrode(0,50,32,52,'v1', -500, 'Iron', femm)
+addElectrode(0,-50,32,-52,'v0', 0, 'Iron', femm)
 
 femm.ei_makeABC()
-
-# electrodes property
-# femm.ei_addblocklabel(5,51)
-# femm.ei_selectlabel(5,51)
-# femm.ei_addblocklabel(5,-51)
-# femm.ei_selectlabel(5,-51)
-# femm.ei_setblockprop('Iron',0,1,0);
-# femm.ei_clearselected();
 
 
 # env property
@@ -149,26 +137,6 @@ femm.ei_addblocklabel(50,10);
 femm.ei_selectlabel(50,10);
 femm.ei_setblockprop('air',0,1,0);
 femm.ei_clearselected();
-
-# # Add a "Conductor Property" for each of the strips
-# femm.ei_addconductorprop('v0',-500,0,1);
-# femm.ei_addconductorprop('v1',500,0,1);
-
-# # Apply voltage v0 (+2000) on one of the electrodes
-# femm.ei_selectsegment(0,51);
-# femm.ei_selectsegment(10,51);
-# femm.ei_selectsegment(5,52);
-# femm.ei_selectsegment(5,50);
-# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v0');
-# femm.ei_clearselected()
-
-# # Assign the "v1" voltage on the other electorde
-# femm.ei_selectsegment(0,-51);
-# femm.ei_selectsegment(10,-51);
-# femm.ei_selectsegment(5,-52);
-# femm.ei_selectsegment(5,-50);
-# femm.ei_setsegmentprop('<None>',0.25,0,0,0,'v1');
-# femm.ei_clearselected()
 
 
 femm.ei_zoomnatural();
@@ -181,14 +149,6 @@ femm.ei_loadsolution()
 
 #
 # ELECTIC PART END ---- back to magnetic part
-
-
-eM =  9.1e-31
-eQ = -1.6e-19
-THREAD_NUM = 10
-SIMULATION_POINTS = 100
-ANODE_LEVEL = -52 # This should be set automatically as part of Anode/Cathode creation
-t = 1e-10  # simulation time interval
 
 
 
@@ -237,9 +197,9 @@ for i in range (0,THREAD_NUM): # t
 			run = False
 			continue
 
-		femm.ei_addnode(pos[0],pos[1])
-		femm.ei_addnode(prev_pos[0],prev_pos[1])
-		femm.ei_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+		femm.ei_addnode(math.sqrt(pos[0]*pos[0]* + pos[2]*pos[2]),pos[1])
+		femm.ei_addnode(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1])
+		femm.ei_addsegment(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1],math.sqrt(pos[0]*pos[0]* + pos[2]*pos[2]),pos[1])
 
 		femm.mi_addnode(pos[0],pos[1])
 		femm.mi_addnode(prev_pos[0],prev_pos[1])
