@@ -56,7 +56,7 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 
 addCoil(10, 20, 15, 30, 180, -180 ,"-A", femm)
 # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
-addCoil(5, -5, 15, 0, 180, -838,"-B" , femm)
+addCoil(5, -3, 15, 0, 180, 838,"-B" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
@@ -126,7 +126,7 @@ def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 # Draw the geometry --- Electric
 # electrodes
 addElectrode(0,50,32,52,'v1', -500, 'Iron', femm)
-addElectrode(0,-50,32,-52,'v0', 0, 'Iron', femm)
+addElectrode(0,-50,32,-52,'v0', 2500, 'Iron', femm)
 
 femm.ei_makeABC()
 
