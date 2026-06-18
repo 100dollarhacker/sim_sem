@@ -54,9 +54,10 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	
 
 
-addCoil(10, 20, 15, 30, 180, -180 ,"-A", femm)
+addCoil(10, 20, 15, 30, 0, -400 ,"-A", femm)
 # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
-addCoil(5, -3, 15, 0, 180, 838,"-B" , femm)
+addCoil(5, -20, 20, -15, 0, 300,"-B" , femm)
+# addCoil(5, -30, 15, -25, 180, 00,"-C" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
@@ -82,13 +83,13 @@ femm.mi_analyze()
 femm.mi_loadsolution()
 
 # Nice, but I am not sure it's gives real values.
-coilName = "-B"
-vals = femm.mo_getcircuitproperties('icoil'+coilName);
+# coilName = "-B"
+# vals = femm.mo_getcircuitproperties('icoil'+coilName);
 
-# If we were interested in inductance, it could be obtained by
-# dividing flux linkage by current
-L = 1000*vals[2]/vals[0];
-print('The self-inductance of the coil-%s is %g mH' % (coilName,L));
+# # If we were interested in inductance, it could be obtained by
+# # dividing flux linkage by current
+# L = 1000*vals[2]/vals[0];
+# print('The self-inductance of the coil-%s is %g mH' % (coilName,L));
 
 
 # ELECTRIC PART ------------
@@ -155,7 +156,7 @@ femm.ei_loadsolution()
 for i in range (0,THREAD_NUM): # t
 	# start position
 	pos = (0.01 + i/10,50-0.1,0)
-	v = (0,0,0)
+	v = (1e6*(i)/THREAD_NUM,-1e6*(THREAD_NUM - i)/THREAD_NUM,0)
 	a = (0,0,0)
 
 	prev_pos = pos
