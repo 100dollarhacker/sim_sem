@@ -57,7 +57,7 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 addCoil(10, 20, 15, 30, 0, -400 ,"-A", femm)
 # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
 addCoil(5, -20, 20, -15, 0, 300,"-B" , femm)
-# addCoil(5, -30, 15, -25, 180, 00,"-C" , femm)
+addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
