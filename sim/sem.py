@@ -5,11 +5,19 @@ import matplotlib.pyplot as plt
 import math
 
 
+import numpy as np
+from plasmapy.simulation.particle_integrators import BorisIntegrator
+
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D  # <-- Missing import
+
+
 eM =  9.1e-31
 eQ = -1.6e-19
-THREAD_NUM = 10
-SIMULATION_POINTS = 100
-ANODE_LEVEL = -50 # This should be set automatically as part of Anode/Cathode creation
+THREAD_NUM = 1
+SIMULATION_POINTS = 200
+ANODE_LEVEL = -5 # This should be set automatically as part of Anode/Cathode creation
 t = 1e-10  # simulation time interval
 
 
@@ -54,10 +62,10 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	
 
 
-addCoil(10, 20, 15, 30, 0, -400 ,"-A", femm)
-# addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
-addCoil(5, -20, 20, -15, 0, 300,"-B" , femm)
-addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
+addCoil(10, 20, 15, 30, 0, -4e-1 ,"-A", femm)
+# # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
+# addCoil(5, -20, 20, -15, 0, 300,"-B" , femm)
+# addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
 
 
 # Define an "open" boundary condition using the built-in function:
@@ -148,7 +156,7 @@ femm.ei_saveas('./trash/strips.fee');
 femm.ei_analyze();
 femm.ei_loadsolution()
 
-#
+
 # ELECTIC PART END ---- back to magnetic part
 
 
@@ -162,51 +170,117 @@ for i in range (0,THREAD_NUM): # t
 	prev_pos = pos
 	run = True
 
+
+
+
+	# Create the figure and a 3D subplot
+	fig = plt.figure()
+	ax = fig.add_subplot(projection='3d') #
+
+
+	B = np.array([[-5.0e-9, -5e-7, 0]])
+	E = np.array([[0.0, 0.0, 0.0]])
+	x_t0 = np.array([[1, 50, 0.0]])
+	# v_t0 = np.array([[500, 500000.0, 0.0]])
+	v_t0 = np.array([[0.0, 0.0, 0.0]])
+	xs, ys, zs = [], [], []
+
+
 	for n in range(0,SIMULATION_POINTS):
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
 
 		if not run:
 			continue
 
-		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
+		# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
+		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(x_t0[0,0],x_t0[0,1])
 
-		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
+		# _,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
+		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(x_t0[0,0],x_t0[0,1])
 		
-		print('                                                   V/A v(%g,%g,%g) a(%g,%g,%g) ' % (v[0], v[1],v[2], a[0], a[1], a[2]))
-		v = (v[0] + a[0]*t,v[1] + a[1]*t, v[2] + a[2] *t)
+		
+		B = np.array([[Bx, By, 0]])
+		E = np.array([[Ex/1000, Ey/1000, 0.0]])
+
+
+		x_t0, v_t0 = BorisIntegrator.push(x=x_t0, v=v_t0, B=B, E=E, q=-1.6e-19, m=9.1e-31, dt=1e-7)
+		print(x_t0)
+		xs.append(x_t0[0,0])
+		ys.append(x_t0[0,1])
+		zs.append(x_t0[0,2])
+
+	
+		print(f" Bx:{Bx} By:{By}")
+		pos = (x_t0[0,0],x_t0[0,1],x_t0[0,2])
+		# print('                                                   V/A v(%g,%g,%g) a(%g,%g,%g) ' % (v[0], v[1],v[2], a[0], a[1], a[2]))
+		# v = (v[0] + a[0]*t,v[1] + a[1]*t, v[2] + a[2] *t)
 		# F = E*q =m * a ==> a = E* q / m
 
-			
-		a = (Ex*eQ/eM + v[2]*By*eQ/eM,Ey*eQ/eM + v[2]*Bx*eQ/eM, (v[1]*Bx + v[0]*By)*eQ/eM )
-
-
-
-		pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2, pos[2]/1000 + v[2]*t + a[2]*t*t/2)
 		
-		#Mirror particles
-		if pos_m[0] < 0:
-			pos_m = (-pos_m[0],pos_m[1],pos_m[2])
-			v = (-v[0],v[1],v[2])
-
-		pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
+		# a = (Ex*eQ/eM + v[2]*By*eQ/eM,Ey*eQ/eM + v[2]*Bx*eQ/eM, (v[1]*Bx + v[0]*By)*eQ/eM )
 
 
 
-		# a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
-		print('Pos @ n:%g x:%g y:%g z:%g  %g,%g,%g' % (n, pos[0], pos[1], pos[2], prev_pos[0], prev_pos[1], prev_pos[2]))	
+		# pos_m = (pos[0]/1000 + v[0]*t + a[0]*t*t/2,pos[1]/1000 + v[1]*t + a[1]*t*t/2, pos[2]/1000 + v[2]*t + a[2]*t*t/2)
+		
+		# #Mirror particles
+		# if pos_m[0] < 0:
+		# 	pos_m = (-pos_m[0],pos_m[1],pos_m[2])
+		# 	v = (-v[0],v[1],v[2])
+
+		# pos = (pos_m[0]*1000, pos_m[1]*1000, pos_m[2]*1000)
+
+
+
+		# # a = (Ex*eQ/eM,Ey*eQ/eM) # ma = F = E*q  ==> a = E*q/m
+		# print('Pos @ n:%g x:%g y:%g z:%g  %g,%g,%g' % (n, pos[0], pos[1], pos[2], prev_pos[0], prev_pos[1], prev_pos[2]))	
 
 		if pos[1] < ANODE_LEVEL:
 			run = False
 			continue
 
-		femm.ei_addnode(math.sqrt(pos[0]*pos[0]* + pos[2]*pos[2]),pos[1])
-		femm.ei_addnode(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1])
-		femm.ei_addsegment(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1],math.sqrt(pos[0]*pos[0]* + pos[2]*pos[2]),pos[1])
+		femm.ei_addnode(pos[0],pos[1])
+		# femm.ei_addnode(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1])
+		# femm.ei_addsegment(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1],math.sqrt(pos[0]*pos[0]* + pos[2]*pos[2]),pos[1])
 
 		femm.mi_addnode(pos[0],pos[1])
-		femm.mi_addnode(prev_pos[0],prev_pos[1])
-		femm.mi_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+		# femm.mi_addnode(prev_pos[0],prev_pos[1])
+		# femm.mi_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
 
-		prev_pos = pos
+		# prev_pos = pos
+
+	# Plot the data
+	ax.plot3D(xs, ys, zs, 'gray')
+	ax.scatter3D(xs, ys, zs, c=zs, cmap='Greens')
+
+	# ax.set_xlim(0, 100)
+	# ax.set_ylim(0, 100)
+	# ax.set_zlim(0, 100)
+	ax.set_xlabel('X')
+	ax.set_ylabel('Y')
+	ax.set_zlabel('Z')
+
+
+	# This opens the interactive window where you can left-click and drag to rotate
+	plt.show() 	
 
 
 femm.prompt('Press <ENTER> to continue')
