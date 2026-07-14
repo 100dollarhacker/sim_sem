@@ -108,9 +108,11 @@ femm.newdocument(1)
 
 femm.ei_probdef('millimeters','axi',10**(-8),10**6,30);
 
+# env property
+femm.ei_addmaterial('air',1,1,0);
+femm.ei_addmaterial('Glass',4.5,4.5,0);
 femm.ei_addmaterial('Iron',2500,2500,0);
 
-# def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 
 def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 
@@ -135,14 +137,15 @@ def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 # Draw the geometry --- Electric
 # electrodes
 addElectrode(10,1,11,50,'v0', 1000, 'Iron', femm)
+addElectrode(12,-50,13,50,'vg0', 0, 'Glass', femm)
 addElectrode(10,-1,11,-50,'v1', 5000, 'Iron', femm)
 addElectrode(0,-50,7,-52,'v2', 5000, 'Iron', femm)
 
 femm.ei_makeABC()
 
 
-# env property
-femm.ei_addmaterial('air',1,1,0);
+
+
 femm.ei_addblocklabel(50,10);
 femm.ei_selectlabel(50,10);
 femm.ei_setblockprop('air',0,1,0);
