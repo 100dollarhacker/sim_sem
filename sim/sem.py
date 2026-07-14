@@ -15,9 +15,9 @@ from mpl_toolkits.mplot3d import Axes3D  # <-- Missing import
 
 eM =  9.1e-31
 eQ = -1.6e-19
-THREAD_NUM = 1
+THREAD_NUM = 10
 SIMULATION_POINTS = 200
-ANODE_LEVEL = -5 # This should be set automatically as part of Anode/Cathode creation
+ANODE_LEVEL = -50 # This should be set automatically as part of Anode/Cathode creation
 t = 1e-10  # simulation time interval
 
 
@@ -62,9 +62,9 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	
 
 
-addCoil(10, 20, 15, 30, 0, -4e-1 ,"-A", femm)
+addCoil(10, 15, 15, 30, 0, 4e-1 ,"-A", femm)
 # # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
-# addCoil(5, -20, 20, -15, 0, 300,"-B" , femm)
+addCoil(5, -30, 20, -10, 180, 2e+0,"-B" , femm)
 # addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
 
 
@@ -135,7 +135,7 @@ def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 # Draw the geometry --- Electric
 # electrodes
 addElectrode(0,50,32,52,'v1', -500, 'Iron', femm)
-addElectrode(0,-50,32,-52,'v0', 2500, 'Iron', femm)
+addElectrode(0,-50,32,-52,'v0', 500, 'Iron', femm)
 
 femm.ei_makeABC()
 
@@ -173,38 +173,17 @@ for i in range (0,THREAD_NUM): # t
 
 
 
-	# Create the figure and a 3D subplot
-	fig = plt.figure()
-	ax = fig.add_subplot(projection='3d') #
-
+	
 
 	B = np.array([[-5.0e-9, -5e-7, 0]])
 	E = np.array([[0.0, 0.0, 0.0]])
-	x_t0 = np.array([[1, 50, 0.0]])
+	x_t0 = np.array([[0.01 + i/3, 50-0.1, 0.0]])
 	# v_t0 = np.array([[500, 500000.0, 0.0]])
 	v_t0 = np.array([[0.0, 0.0, 0.0]])
 	xs, ys, zs = [], [], []
 
 
 	for n in range(0,SIMULATION_POINTS):
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
 
 
 		if not run:
@@ -267,20 +246,24 @@ for i in range (0,THREAD_NUM): # t
 
 		# prev_pos = pos
 
-	# Plot the data
-	ax.plot3D(xs, ys, zs, 'gray')
-	ax.scatter3D(xs, ys, zs, c=zs, cmap='Greens')
+# Create the figure and a 3D subplot
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d') #
 
-	# ax.set_xlim(0, 100)
-	# ax.set_ylim(0, 100)
-	# ax.set_zlim(0, 100)
-	ax.set_xlabel('X')
-	ax.set_ylabel('Y')
-	ax.set_zlabel('Z')
+# Plot the data
+ax.plot3D(xs, ys, zs, 'gray')
+ax.scatter3D(xs, ys, zs, c=zs, cmap='Greens')
+
+# ax.set_xlim(0, 100)
+# ax.set_ylim(0, 100)
+# ax.set_zlim(0, 100)
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
 
 
-	# This opens the interactive window where you can left-click and drag to rotate
-	plt.show() 	
+# This opens the interactive window where you can left-click and drag to rotate
+plt.show() 	
 
 
 femm.prompt('Press <ENTER> to continue')
