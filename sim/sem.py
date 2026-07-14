@@ -15,7 +15,7 @@ from mpl_toolkits.mplot3d import Axes3D  # <-- Missing import
 
 eM =  9.1e-31
 eQ = -1.6e-19
-THREAD_NUM = 10
+THREAD_NUM = 3
 SIMULATION_POINTS = 200
 ANODE_LEVEL = -50 # This should be set automatically as part of Anode/Cathode creation
 t = 1e-10  # simulation time interval
@@ -28,18 +28,18 @@ femm.openfemm();
 # We need to create a new Magnetostatics document to work on.
 femm.newdocument(0);
 
-# Define the problem type.  Magnetostatic; Units of mm; Axisymmetric; 
-# Precision of 10^(-8) for the linear solver; a placeholder of 0 for 
-# the depth dimension, and an angle constraint of 30 degrees
-femm.mi_probdef(0, 'millimeters', 'axi', 1.e-8, 0, 30);
-#femm.mi_probdef(0, 'millimeters', 'planar', 1.e-8, 0, 30);
+# # Define the problem type.  Magnetostatic; Units of mm; Axisymmetric; 
+# # Precision of 10^(-8) for the linear solver; a placeholder of 0 for 
+# # the depth dimension, and an angle constraint of 30 degrees
+# femm.mi_probdef(0, 'millimeters', 'axi', 1.e-8, 0, 30);
+# #femm.mi_probdef(0, 'millimeters', 'planar', 1.e-8, 0, 30);
 
-# Draw a rectangle for the steel bar on the axis;
-# femm.mi_drawrectangle(0, -10, 10, 10);
+# # Draw a rectangle for the steel bar on the axis;
+# # femm.mi_drawrectangle(0, -10, 10, 10);
 
-# Add some block labels materials properties
-femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
+# # Add some block labels materials properties
+# femm.mi_addmaterial('Air', 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+# femm.mi_addmaterial('Coil', 1, 1, 0, 0, 58*0.65, 0, 0, 1, 0, 0, 0);
 
 
 def addCoil(x0,y0, x1,y1, deg, B,name, femm):
@@ -62,33 +62,33 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	
 
 
-addCoil(10, 15, 15, 30, 0, 4e-1 ,"-A", femm)
-# # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
-addCoil(5, -30, 20, -10, 180, 2e+0,"-B" , femm)
-# addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
+# addCoil(10, 15, 15, 30, 0, 4e-1 ,"-A", femm)
+# # # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
+# addCoil(5, -30, 20, -10, 180, 2e+0,"-B" , femm)
+# # addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
 
 
-# Define an "open" boundary condition using the built-in function:
-femm.mi_makeABC()
+# # Define an "open" boundary condition using the built-in function:
+# femm.mi_makeABC()
 
-# Add block labels, one to each the steel, coil, and air regions.
-# femm.mi_addblocklabel(5,0);
-femm.mi_addblocklabel(5,20);
-femm.mi_selectlabel(5,20);
-femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
-femm.mi_clearselected()
-
-
-# Now, the finished input geometry can be displayed.
-femm.mi_zoomnatural()
-
-# We have to give the geometry a name before we can analyze it.
-femm.mi_saveas('./trash/coil.fem');
+# # Add block labels, one to each the steel, coil, and air regions.
+# # femm.mi_addblocklabel(5,0);
+# femm.mi_addblocklabel(5,20);
+# femm.mi_selectlabel(5,20);
+# femm.mi_setblockprop('Air', 0, 1, '<None>', 0, 0, 0);
+# femm.mi_clearselected()
 
 
-# Now,analyze the problem and load the solution when the analysis is finished
-femm.mi_analyze()
-femm.mi_loadsolution()
+# # Now, the finished input geometry can be displayed.
+# femm.mi_zoomnatural()
+
+# # We have to give the geometry a name before we can analyze it.
+# femm.mi_saveas('./trash/coil.fem');
+
+
+# # Now,analyze the problem and load the solution when the analysis is finished
+# femm.mi_analyze()
+# femm.mi_loadsolution()
 
 # Nice, but I am not sure it's gives real values.
 # coilName = "-B"
@@ -134,8 +134,9 @@ def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 
 # Draw the geometry --- Electric
 # electrodes
-addElectrode(0,50,32,52,'v1', -500, 'Iron', femm)
-addElectrode(0,-50,32,-52,'v0', 500, 'Iron', femm)
+addElectrode(10,1,11,50,'v0', 1000, 'Iron', femm)
+addElectrode(10,-1,11,-50,'v1', 5000, 'Iron', femm)
+addElectrode(0,-50,7,-52,'v2', 5000, 'Iron', femm)
 
 femm.ei_makeABC()
 
@@ -146,7 +147,6 @@ femm.ei_addblocklabel(50,10);
 femm.ei_selectlabel(50,10);
 femm.ei_setblockprop('air',0,1,0);
 femm.ei_clearselected();
-
 
 femm.ei_zoomnatural();
 
@@ -164,7 +164,7 @@ femm.ei_loadsolution()
 for i in range (0,THREAD_NUM): # t
 	# start position
 	pos = (0.01 + i/10,50-0.1,0)
-	v = (1e6*(i)/THREAD_NUM,-1e6*(THREAD_NUM - i)/THREAD_NUM,0)
+	v = (10e6*(i)/THREAD_NUM,-1e6*(THREAD_NUM - i)/THREAD_NUM,0)
 	a = (0,0,0)
 
 	prev_pos = pos
@@ -190,13 +190,13 @@ for i in range (0,THREAD_NUM): # t
 			continue
 
 		# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(pos[0],pos[1])
-		_,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(x_t0[0,0],x_t0[0,1])
+		# _,Bx,By,_,_,_,_,_,_,_,_,_,_,_ = femm.mo_getpointvalues(x_t0[0,0],x_t0[0,1])
 
 		# _,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(pos[0],pos[1])
 		_,_,_,Ex,Ey,_,_,_             = femm.eo_getpointvalues(x_t0[0,0],x_t0[0,1])
 		
 		
-		B = np.array([[Bx, By, 0]])
+		# B = np.array([[Bx, By, 0]])
 		E = np.array([[Ex/1000, Ey/1000, 0.0]])
 
 
@@ -207,8 +207,22 @@ for i in range (0,THREAD_NUM): # t
 		zs.append(x_t0[0,2])
 
 	
-		print(f" Bx:{Bx} By:{By}")
-		pos = (x_t0[0,0],x_t0[0,1],x_t0[0,2])
+		# print(f" Bx:{Bx} By:{By}")
+		pos = (x_t0[0,0], x_t0[0,1], x_t0[0,2])
+		v =   (v_t0[0,0], v_t0[0,1], v_t0[0,2])
+
+
+		#Mirror particles
+		if x_t0[0,0] < 0:
+			# pos = (-pos[0],pos[1],pos[2])
+			# v = (-v[0],v[1],v[2])
+			x_t0[0,0] = -x_t0[0,0]
+			v_t0[0,0] = -v_t0[0,0]
+
+		# x_t0 = pos
+		# v_t0 = v
+
+
 		# print('                                                   V/A v(%g,%g,%g) a(%g,%g,%g) ' % (v[0], v[1],v[2], a[0], a[1], a[2]))
 		# v = (v[0] + a[0]*t,v[1] + a[1]*t, v[2] + a[2] *t)
 		# F = E*q =m * a ==> a = E* q / m
@@ -240,9 +254,9 @@ for i in range (0,THREAD_NUM): # t
 		# femm.ei_addnode(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1])
 		# femm.ei_addsegment(math.sqrt(prev_pos[0]*prev_pos[0] + prev_pos[2]*prev_pos[2]),prev_pos[1],math.sqrt(pos[0]*pos[0]* + pos[2]*pos[2]),pos[1])
 
-		femm.mi_addnode(pos[0],pos[1])
-		# femm.mi_addnode(prev_pos[0],prev_pos[1])
-		# femm.mi_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
+		# femm.mi_addnode(pos[0],pos[1])
+		# # femm.mi_addnode(prev_pos[0],prev_pos[1])
+		# # femm.mi_addsegment(prev_pos[0],prev_pos[1],pos[0],pos[1])
 
 		# prev_pos = pos
 
