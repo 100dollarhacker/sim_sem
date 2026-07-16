@@ -138,8 +138,10 @@ def addElectrode(x0, y0, x1, y1 , name , voltage, material, femm):
 # electrodes
 addElectrode(10,1,11,50,'v0', 1000, 'Iron', femm)
 addElectrode(12,-50,13,50,'vg0', 0, 'Glass', femm)
+addElectrode(2,-50,13,-52,'vg1', 0, 'Glass', femm)
 addElectrode(10,-1,11,-50,'v1', 5000, 'Iron', femm)
-addElectrode(0,-50,7,-52,'v2', 5000, 'Iron', femm)
+addElectrode(0,-52,7,-54,'v2', 5000, 'Iron', femm)
+addElectrode(2,-48,7,-49,'v3', 5000, 'Iron', femm)
 
 femm.ei_makeABC()
 
