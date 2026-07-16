@@ -15,10 +15,10 @@ from mpl_toolkits.mplot3d import Axes3D  # <-- Missing import
 
 eM =  9.1e-31
 eQ = -1.6e-19
-THREAD_NUM = 10
+THREAD_NUM = 3
 SIMULATION_POINTS = 200
 ANODE_LEVEL = -50 # This should be set automatically as part of Anode/Cathode creation
-t = 1e-10  # simulation time interval
+t = 1e-7  # simulation time interval
 
 
 
@@ -62,9 +62,9 @@ def addCoil(x0,y0, x1,y1, deg, B,name, femm):
 	
 
 
-addCoil(10, 15, 15, 30, 0, 4e-1 ,"-A", femm)
+addCoil(10, 15, 15, 30, 0, 2e-1 ,"-A", femm)
 # # addCoil(10, -60, 15, -50, 0, -500,"-B" , femm)
-addCoil(5, -30, 20, -10, 180, 2e+0,"-B" , femm)
+# addCoil(5, -30, 20, -10, 180, 2e+0,"-B" , femm)
 # addCoil(5, -40, 15, -35, 0, 300,"-C" , femm)
 
 
@@ -200,7 +200,7 @@ for i in range (0,THREAD_NUM): # t
 		E = np.array([[Ex/1000, Ey/1000, 0.0]])
 
 
-		x_t0, v_t0 = BorisIntegrator.push(x=x_t0, v=v_t0, B=B, E=E, q=-1.6e-19, m=9.1e-31, dt=1e-7)
+		x_t0, v_t0 = BorisIntegrator.push(x=x_t0, v=v_t0, B=B, E=E, q=-1.6e-19, m=9.1e-31, dt=t)
 		print(x_t0)
 		xs.append(x_t0[0,0])
 		ys.append(x_t0[0,1])
