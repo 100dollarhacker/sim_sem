@@ -4,6 +4,8 @@ This is a simple FEMM based script to calculate the trajectory of electron in ma
 First we calculate magnetic and elctric fileds of the problem.
 Then we simulate the forces and acts upon electrons in the system.
 
+Pre INSTALL:
+Follow instruction how to install Wine on Ubuntu
 
 INSTALL:
 Install pip and femm42bin_x64_12jan2016.exe (on Ubuntu run 'wine femm42setup.exe')
